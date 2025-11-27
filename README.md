@@ -12,6 +12,17 @@ integration, neural network acceleration, and the RISC-V architecture. The
 reference target is the PolarFire SoC Discovery Kit, but the flow generalises to
 custom boards built around MPFS devices.
 
+Repository Layout
+-----------------
+
+- `docs/` – Architecture notes (AMP, radar DSP, RTOS↔FPGA comms) plus workflow guides for Yocto and Zephyr.
+- `scripts/` – Environment, build, and deployment helpers used across Yocto, Zephyr, and HSS flows.
+- `yocto/` – Workspace metadata: manifests, layer stubs (`meta-polarfire-nn`), and sample `conf` templates.
+- `bsp/` – Hart Software Services payload configs, device-tree overlays, and Libero FPGA sources.
+- `zephyr/` – West workspace root holding board tweaks, AMP-targeted apps, and reusable modules.
+- `linux/` – Kernel patch queues, rootfs overlays, and userspace HAL/apps for the Linux hart.
+- `docs/workflows/` and `docs/architecture/` link back to the AMP checklist (OpenAMP, IPC service) and radar DSP guidance shown in the project plan.
+
 Why leverage Microchip's Yocto BSP?
 -----------------------------------
 
