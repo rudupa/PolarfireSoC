@@ -20,8 +20,22 @@ Repository Layout
 - `yocto/` – Workspace metadata: manifests, layer stubs (`meta-polarfire-nn`), and sample `conf` templates.
 - `bsp/` – Hart Software Services payload configs, device-tree overlays, and Libero FPGA sources.
 - `zephyr/` – West workspace root holding board tweaks, AMP-targeted apps, and reusable modules.
-- `linux/` – Kernel patch queues, rootfs overlays, and userspace HAL/apps for the Linux hart.
-- `docs/workflows/` and `docs/architecture/` link back to the AMP checklist (OpenAMP, IPC service) and radar DSP guidance shown in the project plan.
+- `linux/` – Kernel patch queues, rootfs overlays (including Stage 1 initramfs + Stage 2 ROS2 GUI), and userspace HAL/apps for the Linux hart.
+- `qnx/` – BSP metadata, sample services, and IPC contracts for running QNX Neutrino alongside Linux and Zephyr in the AMP configuration.
+- `docs/workflows/` and `docs/architecture/` (see `docs/architecture/target.md` and `docs/resources_budgeting.md`) capture target hardware specs, resource budgets, and AMP/RR radar DSP guidance referenced in the plan.
+- `sim/` – QEMU and emulator assets that replicate Linux-only, Zephyr-only, and integrated AMP boot flows before touching real hardware.
+
+Resource Budgets (Approximate)
+------------------------------
+
+| Domain | RAM Minimum | RAM Typical | Flash / Storage Minimum | Flash / Storage Typical | Notes |
+|--------|-------------|-------------|-------------------------|-------------------------|-------|
+| Linux Stage 1 (kernel + initramfs GUI) | 64 MB | 96 MB | 32 MB | 64 MB | Kernel plus SDL2 framebuffer UI required for ~1.5 s readiness.
+| Linux Stage 2 (rootfs + Weston + ROS2) | 700 MB | 1.1 GB | 1.6 GB | 2.0 GB | Includes Yocto rootfs, compositor, ROS2 middleware, and visualization apps.
+| QNX (BSP + services) | 64 MB | 128 MB | 128 MB | 256 MB | Covers startup code, resource managers, and deterministic control apps.
+| Zephyr (per hart) | 4 MB | 8 MB | 8 MB | 16 MB | OpenAMP-enabled ELFs plus minimal assets loaded via HSS payloads.
+
+These budgets keep overall usage within the Discovery Kit’s 1 GB LPDDR4 and SD/eMMC storage capacity while leaving headroom for telemetry buffers and accelerator data.
 
 Why leverage Microchip's Yocto BSP?
 -----------------------------------

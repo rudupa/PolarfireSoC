@@ -1,6 +1,6 @@
 # System Architecture Overview
 
-This document tracks the end-to-end view of the PolarFire SoC learning platform:
+This document tracks the end-to-end view of the PolarFire SoC learning platform (see `target.md` for detailed board specs):
 
 1. **Hardware** – MPFS095T device on the Discovery Kit, on-board peripherals, and any daughtercards that feed the radar/DSP accelerator.
 2. **Boot Flow** – Hart Software Services (HSS) loads the Libero bitstream, boots Linux on U54_0, and can optionally launch Zephyr images on the remaining U54 cores in AMP mode.

@@ -1,0 +1,52 @@
+# Build directories
+build/
+**/build/
+**/out/
+**/tmp/
+
+# Yocto artifacts
+yocto/build*/
+yocto/sstate-cache/
+yocto/tmp/
+yocto/downloads/
+
+# Libero / FPGA outputs
+bsp/libero/exports/
+bsp/libero/projects/**/smartgen/
+bsp/libero/projects/**/synthesis/
+
+# HSS payload bundles
+bsp/hss/payloads/
+
+# Zephyr artifacts
+zephyr/**/build/
+zephyr/**/.west/
+
+# QNX artifacts
+qnx/**/install/
+qnx/**/ifs/
+qnx/**/o/
+
+# Simulation artifacts
+sim/**/build/
+sim/**/images/
+sim/**/logs/
+
+# Toolchain/SDK installers
+sdk/
+toolchains/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+logs/
