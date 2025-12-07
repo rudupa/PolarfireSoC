@@ -1,6 +1,6 @@
 # QNX Workspace
 
-This folder captures everything required to bring QNX Neutrino onto one of the U54 cores while Linux and Zephyr occupy the remaining harts. Use it to stage build files, BSP customisations, and sample applications before turning them into automated scripts.
+This folder captures everything required to bring QNX Neutrino onto hart U54_2 while Linux occupies U54_0/U54_1 and Zephyr runs on U54_3. Use it to stage build files, BSP customisations, and sample applications before turning them into automated scripts.
 
 Recommended structure:
 

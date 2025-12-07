@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: MIT
+
+/ {
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		amp_shmem: amp-shmem@b8000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x0 0xb8000000 0x0 0x00200000>;
+			no-map;
+			reusable;
+			dma-coherent;
+			status = "okay";
+		};
+	};
+
+	amp_mailboxes: amp-mailboxes {
+		compatible = "microchip,mpfs-ihc-mailbox";
+		memory-region = <&amp_shmem>;
+		status = "okay";
+	};
+};
+
+&{/chosen} {
+	linux,shared-memory = &amp_shmem;
+};

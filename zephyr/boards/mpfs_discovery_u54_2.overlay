@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: MIT
+// Hart-specific overlay for Zephyr images targeting U54_2.
+
+/ {
+	amp_hart_config: amp-hart-config {
+		compatible = "polarfire,zephyr-amp-hart";
+		mpfs,hart-index = <2>;
+		amp,mailbox-channel = <3>; /* AMP_MAILBOX_CH_ZEPHYR_U54_2 */
+		amp,doorbell-irq = <61>;   /* AMP_IHC_IRQ_U54_2 */
+		status = "okay";
+	};
+};
+
+&cpu1 {
+	status = "disabled";
+};
+
+&cpu2 {
+	status = "okay";
+};
+
+&cpu3 {
+	status = "disabled";
+};
+
+&cpu4 {
+	status = "disabled";
+};

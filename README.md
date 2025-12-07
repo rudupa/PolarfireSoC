@@ -1,7 +1,4 @@
-# PolarfireSoC
-# PolarfireSoC
-PolarFire SoC Learning Project
-=============================
+# PolarFire SoC Learning Project
 
 Overview
 --------
@@ -12,6 +9,13 @@ integration, neural network acceleration, and the RISC-V architecture. The
 reference target is the PolarFire SoC Discovery Kit, but the flow generalises to
 custom boards built around MPFS devices.
 
+AMP Hart Allocation
+-------------------
+
+- `U54_0` / `U54_1` – Linux SMP pair handling GUI, ROS2, and accelerator control.
+- `U54_2` – QNX Neutrino safety/diagnostics supervisor coordinating shared memory.
+- `U54_3` – Zephyr RTOS running radar DSP, DMA steering, and near-real-time tasks.
+
 Repository Layout
 -----------------
 
@@ -19,11 +23,44 @@ Repository Layout
 - `scripts/` – Environment, build, and deployment helpers used across Yocto, Zephyr, and HSS flows.
 - `yocto/` – Workspace metadata: manifests, layer stubs (`meta-polarfire-nn`), and sample `conf` templates.
 - `bsp/` – Hart Software Services payload configs, device-tree overlays, and Libero FPGA sources.
-- `zephyr/` – West workspace root holding board tweaks, AMP-targeted apps, and reusable modules.
-- `linux/` – Kernel patch queues, rootfs overlays (including Stage 1 initramfs + Stage 2 ROS2 GUI), and userspace HAL/apps for the Linux hart.
-- `qnx/` – BSP metadata, sample services, and IPC contracts for running QNX Neutrino alongside Linux and Zephyr in the AMP configuration.
+- `zephyr/` – West workspace root for the Zephyr RTOS image assigned to hart U54_3, covering board tweaks, AMP-targeted apps, and reusable modules.
+- `linux/` – Kernel patch queues, rootfs overlays (Stage 1 initramfs + Stage 2 ROS2 GUI), and userspace HAL/apps for the Linux SMP harts (U54_0/U54_1).
+- `qnx/` – BSP metadata, sample services, and IPC contracts for QNX Neutrino on hart U54_2 alongside Linux and Zephyr in the AMP configuration.
 - `docs/workflows/` and `docs/architecture/` (see `docs/architecture/target.md` and `docs/resources_budgeting.md`) capture target hardware specs, resource budgets, and AMP/RR radar DSP guidance referenced in the plan.
 - `sim/` – QEMU and emulator assets that replicate Linux-only, Zephyr-only, and integrated AMP boot flows before touching real hardware.
+
+Quickstart
+----------
+
+1. **Sync workspaces**
+  - `repo init -u yocto/manifests -m default.xml && repo sync` seeds Yocto layers.
+  - `west init -l zephyr && west update` pulls Zephyr + modules.
+2. **Configure environments**
+  - Windows PowerShell: `pwsh -File scripts/env/setup-yocto-env.ps1` or `setup-zephyr-env.ps1`.
+  - WSL/Linux: `source scripts/env/setup-yocto-env.sh` and `setup-zephyr-env.sh` to export `MACHINE=mpfs-amp`, `ZEPHYR_BASE`, etc.
+3. **Build Yocto Linux (U54_0/U54_1)**
+  - `bitbake core-image-full-cmdline` (or future `mpfs-dev-image`) with `local.conf` derived from `yocto/conf/templates/` (the sample already adds the `amp-runtime` package so shared-memory/IPMsg services come preinstalled).
+4. **Build Zephyr (U54_3)**
+  - `pwsh -File scripts/build/zephyr_amp.sh -b amp_pingpong -H 3` stitches `bsp/device-tree/zephyr/mpfs-amp.overlay` with `zephyr/boards/mpfs_discovery_u54_3.overlay` and runs `west build`.
+5. **Assemble HSS payload**
+  - `scripts/build/amp_basic.sh --yocto out/ --zephyr build/amp_pingpong` copies artifacts into `bsp/hss`, runs `west generate-payload`, and emits an HSS image matching `bsp/hss/manifests/amp_linux_zephyr.yaml`.
+
+Prerequisites
+-------------
+
+- Git 2.40+, Python 3.10+, CMake 3.24+, Ninja, and the `repo` + `west` command-line tools (see `scripts/env/README.md`).
+- Zephyr SDK or a RISC-V GNU toolchain in `PATH` for building apps in `zephyr/apps/*`.
+- Yocto host packages (Ubuntu example): `sudo apt install gawk wget git diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping libsdl2-dev`. See `docs/workflows/yocto_build.md` for the authoritative list.
+- WSL2 + PowerShell 7 if working from Windows; scripts are dual-hosted so both shells share environment helpers.
+- Optional: QNX SDP and Libero SoC installations when you are ready to exercise the `qnx/` and `bsp/libero` flows.
+
+Reference Repositories
+----------------------
+
+- [Zephyr Applications](https://github.com/polarfire-soc/zephyr-applications) – Zephyr workspace manifest, AMP-ready sample apps, and West extensions (`generate-payload`, `flash-payload`) that wrap the HSS payload generator.
+- [PolarFire SoC Documentation](https://github.com/polarfire-soc/polarfire-soc-documentation) – Official Microchip knowledge base covering AMP workflows, HSS payload formats, boot modes, and board-specific guides.
+- [meta-mchp](https://github.com/linux4microchip/meta-mchp) – Vendor Yocto layers (`meta-mchp-polarfire-soc`, `meta-mchp-common`) supplying kernel/U-Boot recipes, machine confs, and device trees for MPFS devices.
+- [Discovery Kit Reference Design](https://github.com/polarfire-soc/polarfire-soc-discovery-kit-reference-design) – Libero Tcl scripts and MSS configs for generating the Discovery Kit reference bitstream, including optional arguments for HSS updates and accelerator-facing fabric tweaks.
 
 Resource Budgets (Approximate)
 ------------------------------

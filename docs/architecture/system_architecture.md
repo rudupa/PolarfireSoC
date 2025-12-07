@@ -11,14 +11,14 @@ Consolidates the current AMP plan (Linux + QNX + Zephyr + FPGA) so that document
 | Hart | Role | OS / Payload | Responsibilities | FPGA Interactions |
 |------|------|--------------|------------------|-------------------|
 | E51 | Boot supervisor | HSS | Loads FPGA bitstream, configures clocks/DDRs, launches payloads. | Programs bitstream via HSS payload, exposes management registers.
-| U54_0 | Application/core services | Linux (Stage 1 + Stage 2) | Stage 1 initramfs with SDL2 framebuffer UI; Stage 2 Yocto rootfs running Weston, ROS2 graph, camera ingest, ROS2 fusion, NN/image accelerator orchestration, telemetry, networking, storage. | Controls NN/image-processing IP, shares DMA descriptors with Zephyr, receives processed radar/camera data via shared buffers.
-| U54_1 | Safety / deterministic control | QNX Neutrino | Safety supervision, watchdogs, shared-memory validation, gatekeeper for commands toward Linux & Zephyr. | Read-only or limited write access to FPGA health/status registers to enforce safety policies.
-| U54_2 | Radar control | Zephyr RTOS | Configures radar front-end, owns radar-facing DMA queues, services ISR-to-task FFT/pulse-compression scheduling. | Primary driver for radar DSP accelerators; manages CoreAXI4DMA channels feeding FIR/FFT blocks.
-| U54_3 | Telemetry / auxiliary control | Zephyr RTOS | Telemetry agent, secondary radar stages or spare radar lanes, experimental workloads, fallback radar controller if U54_2 saturates. | Optional co-owner of radar accelerators (secondary lane) or other fabric IP; can release telemetry role to Linux/QNX when dedicating bandwidth to FPGA tasks.
+| U54_0 | Application/core services | Linux (Stage 1 + Stage 2) | Stage 1 initramfs with SDL2 framebuffer UI; Stage 2 Yocto rootfs running Weston, ROS2 graph, camera ingest, ROS2 fusion, NN/image accelerator orchestration, telemetry, networking, storage. | Controls NN/image-processing IP, shares DMA descriptors with Zephyr/QNX, receives processed radar/camera data via shared buffers.
+| U54_1 | Application/core services (SMP peer) | Linux | Shares workload with U54_0 (ROS2 nodes, sensor fusion, acceleration frameworks) and backfills telemetry tasks when Zephyr is saturated. | Provides extra bandwidth for DMA-backed accelerators and can coordinate shared-memory transfers when Zephyr is busy.
+| U54_2 | Safety / deterministic control | QNX Neutrino | Safety supervision, watchdogs, shared-memory validation, gatekeeper for commands toward Linux & Zephyr. | Read-only or limited write access to FPGA health/status registers to enforce safety policies.
+| U54_3 | Radar control + telemetry | Zephyr RTOS | Configures radar front-end, owns radar-facing DMA queues, services ISR-to-task FFT/pulse-compression scheduling, and publishes telemetry. | Primary driver for radar DSP accelerators; manages CoreAXI4DMA channels feeding FIR/FFT blocks and reports throughput/backpressure to Linux/QNX.
 
 > Allocation aligns with Yocto, Zephyr, and QNX folder structure; adjust only if measurements prove another split materially better.
 
-**FPGA & Camera Interaction Summary** – Linux (U54_0) manages camera capture, ROS2 fusion, and any NN/image accelerators instantiated in the FPGA; Zephyr harts (U54_2/U54_3) own radar DMA + DSP pipelines; QNX touches FPGA registers only for health monitoring. Multiple harts may share FPGA DMA/IP through coordinated descriptor tables and doorbells defined in `qnx/ipc`.
+**FPGA & Camera Interaction Summary** – Linux (U54_0/U54_1) manage camera capture, ROS2 fusion, and any NN/image accelerators instantiated in the FPGA; Zephyr (U54_3) owns radar DMA + DSP pipelines; QNX (U54_2) touches FPGA registers only for health monitoring. Multiple harts may share FPGA DMA/IP through coordinated descriptor tables and doorbells defined in `qnx/ipc`.
 
 ## 3. Boot & Runtime Flow
 1. **ROM → HSS (E51)**
@@ -29,8 +29,8 @@ Consolidates the current AMP plan (Linux + QNX + Zephyr + FPGA) so that document
    - stage1-gui.service launches SDL2 framebuffer UI within ~1.5 s.
    - Exposes heartbeat + shared FIFO for later handoff.
 3. **Parallel Bring-up**
-   - U54_1 → QNX: starts safety manager, shared-memory sanitizers.
-   - U54_2/U54_3 → Zephyr: start radar DMA, OpenAMP endpoints, telemetry.
+   - U54_2 → QNX: starts safety manager, shared-memory sanitizers.
+   - U54_3 → Zephyr: starts radar DMA, OpenAMP endpoints, telemetry.
 4. **Stage 2 (Linux Rootfs Pivot)**
    - HSS loaders (or Linux scripts) mount SD/eMMC partition; pivot-to-stage2.sh transitions into the full Yocto rootfs.
    - Weston compositor, ROS2 core, visualization nodes, and networking services start.
@@ -41,10 +41,9 @@ Consolidates the current AMP plan (Linux + QNX + Zephyr + FPGA) so that document
 ## 4. Radar / Vision Acceleration & Parallelization Strategy
 - **Fabric offload**: FIR/FFT/pulse-compression blocks and optional NN/image-processing IP run in FPGA, fed by CoreAXI4DMA/CoreAXI4Stream. Multiple CPU harts can share DMA doorbells and AXI-Lite control windows as long as software arbitrates ownership.
 - **Primary FPGA clients**:
-   - U54_2 (Zephyr) drives radar DMA descriptors, schedules FFT/FIR pipelines, and services ISR completions.
-   - U54_3 (Zephyr) handles secondary radar features, telemetry, or can be reassigned for additional radar throughput.
-   - U54_0 (Linux) programs NN or camera accelerators when present, pulls results into ROS2 graph, and may share DMA queues with Zephyr via shared-memory descriptors.
-   - U54_1 (QNX) accesses FPGA only for safety/health monitoring (e.g., watchdog registers) to avoid contention.
+   - U54_3 (Zephyr) drives radar DMA descriptors, schedules FFT/FIR pipelines, services ISR completions, and publishes telemetry.
+   - U54_0/U54_1 (Linux) program NN or camera accelerators when present, pull results into ROS2 graph, and may share DMA queues with Zephyr via shared-memory descriptors.
+   - U54_2 (QNX) accesses FPGA only for safety/health monitoring (e.g., watchdog registers) to avoid contention and enforces watchdog limits on shared mailboxes.
 - **Camera image processing**: No dedicated ISP/GPU is on-board, but the FPGA fabric can host custom image-processing pipelines (debayer, filtering, CNN). Linux (U54_0) orchestrates camera capture via CSI/parallel interface, then either streams frames directly into DDR for CPU processing or routes them through FPGA IP before ROS2 nodes consume the data.
 - **Parallelization options**:
    1. Increase FPGA pipeline concurrency (multiple FFT engines, separate radar lanes) and expose unique DMA channels to U54_2/U54_3.
@@ -58,8 +57,8 @@ Summary (see docs/resources_budgeting.md for detail):
 |--------|------------------|-------------------------------|-------|
 | Linux Stage 1 | 64 MB / 96 MB | 32 MB / 64 MB | Kernel + initramfs + SDL2 assets in QSPI/SD boot partition.
 | Linux Stage 2 (ROS2 + Weston) | 700 MB / 1.1 GB | 1.6 GB / 2.0 GB | Yocto rootfs, ROS2 workspace, GUI assets on SD/eMMC.
-| QNX (U54_1) | 64 MB / 128 MB | 128 MB / 256 MB | IFS image + resource managers.
-| Zephyr (per hart) | 4 MB / 8 MB | 8 MB / 16 MB | ELFs stored in HSS payloads; includes OpenAMP buffers.
+| QNX (U54_2) | 64 MB / 128 MB | 128 MB / 256 MB | IFS image + resource managers.
+| Zephyr (U54_3) | 4 MB / 8 MB | 8 MB / 16 MB | ELF stored in HSS payload; includes OpenAMP buffers.
 | Shared IPC & DMA carve-outs | 64 MB (static) | N/A | Reserved DDR per memory_layout.md for OpenAMP, QNX mailboxes, FPGA queues.
 
 **Headroom**: Typical RAM total (~1.1 GB + 0.128 GB + 0.016 GB) exceeds 1 GB when peaks coincide. Mitigations: zram swap (128–256 MB), cgroup limits for ROS2, optional redistribution of Zephyr telemetry tasks to Linux to free memory on U54_3.

@@ -1,0 +1,48 @@
+# AMP payload manifest combining Linux (U54_0/U54_1 SMP), QNX on U54_2, and Zephyr on U54_3.
+# Update absolute/relative paths after generating Yocto and Zephyr artifacts.
+
+set-name: 'AMP-Linux-Zephyr'
+
+hart-entry-points: {
+  u54_0: '0x80200000',
+  u54_1: '0x80200000',
+  u54_2: '0x80600000',
+  u54_3: '0x80A00000'
+}
+
+payloads:
+  ../payloads/linux/fw_dynamic.bin: {
+      exec-addr: '0x80000000',
+    owner-hart: u54_0,
+    secondary-hart: u54_1,
+      priv-mode: prv_m,
+      payload-name: "opensbi"
+  }
+
+  ../payloads/linux/Image: {
+      exec-addr: '0x80200000',
+    owner-hart: u54_0,
+    secondary-hart: u54_1,
+      priv-mode: prv_s,
+      payload-name: "linux",
+      payload-args: "console=ttyS0,115200 root=/dev/mmcblk0p2 rootwait",
+      linux: {
+          fdt: '../payloads/linux/polarfire-soc-amp.dtb',
+          initrd: '../payloads/linux/rootfs.cpio.gz'
+      }
+  }
+
+  ../payloads/qnx/ifs.bin: {
+    exec-addr: '0x80600000',
+    owner-hart: u54_2,
+    priv-mode: prv_m,
+    payload-name: "qnx-ifs"
+  }
+
+  ../../zephyr/build/amp_pingpong_hart3/zephyr/zephyr.elf: {
+    exec-addr: '0x80A00000',
+    owner-hart: u54_3,
+    priv-mode: prv_m,
+    skip-opensbi: true,
+    payload-name: "zephyr-amp"
+  }

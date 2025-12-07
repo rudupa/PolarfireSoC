@@ -1,0 +1,15 @@
+// SPDX-License-Identifier: MIT
+
+/ {
+	chosen {
+		zephyr,ipc-shm = &amp_shmem;
+	};
+
+	amp_shmem: shared-memory@b8000000 {
+		compatible = "mmio-sram";
+		reg = <0x0 0xb8000000 0x0 0x00200000>;
+		no-map;
+		zephyr,memory-region;
+		status = "okay";
+	};
+};

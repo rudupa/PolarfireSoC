@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
-  <!-- Pin external BSP repositories here. Example entries are commented out until real URLs are known. -->
-  <!--
-  <remote name="microchip" fetch="https://github.com/Microchip-FPGA"/>
-  <default revision="kirkstone" remote="microchip"/>
-  <project name="meta-microchip" path="sources/meta-microchip" revision="kirkstone"/>
-  <project name="meta-polarfire-soc" path="sources/meta-polarfire-soc" revision="kirkstone"/>
-  -->
+  <remote name="github" fetch="https://github.com"/>
+  <remote name="yocto" fetch="https://git.yoctoproject.org/git"/>
+
+  <default remote="github" revision="scarthgap"/>
+
+  <project name="linux4microchip/meta-mchp"
+           path="sources/meta-mchp"
+           revision="scarthgap"/>
+
+  <project name="openembedded/meta-openembedded"
+           remote="github"
+           path="sources/meta-openembedded"
+           revision="scarthgap"/>
+
+  <project name="poky"
+           remote="yocto"
+           path="sources/poky"
+           revision="scarthgap"/>
+
+  <project name="polarfire-soc/polarfire-soc-documentation"
+           path="sources/polarfire-soc-documentation"
+           revision="master"/>
 </manifest>

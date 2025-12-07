@@ -1,0 +1,13 @@
+[Unit]
+Description=AMP Shared Memory + Mailbox Preparation
+DefaultDependencies=no
+Before=sysinit.target
+ConditionPathExists=/dev/mem
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/amp/amp-shmem-setup.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target

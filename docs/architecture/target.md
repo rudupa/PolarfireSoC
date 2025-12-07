@@ -14,12 +14,12 @@ Comprehensive description of the reference hardware (PolarFire SoC Discovery Kit
 | Hart | Default Role | Notes |
 |------|--------------|-------|
 | E51  | Hart Software Services (HSS) | Loads FPGA bitstream, sequences hart startup. |
-| U54_0 | Linux | Full Yocto image with networking, storage, telemetry. |
-| U54_1 | QNX Neutrino | Safety-critical control loops; interacts via shared memory/mailboxes. |
-| U54_2 | Zephyr RTOS | Radar control plane, DMA programming. |
-| U54_3 | Zephyr RTOS (spare) | Telemetry agent or experimental workload. |
+| U54_0 | Linux | Stage 1/Stage 2 Yocto image with GUI, networking, ROS2, accelerator control. |
+| U54_1 | Linux (SMP peer) | Shares ROS2 workloads, telemetry services, and accelerator orchestration with U54_0. |
+| U54_2 | QNX Neutrino | Safety-critical control loops; supervises shared memory/mailboxes. |
+| U54_3 | Zephyr RTOS | Radar control plane, DMA programming, telemetry helper. |
 
-HSS payload manifests must allow swapping Zephyr/QNX roles as testing dictates.
+HSS payload manifests, device trees, and scripts are locked to this allocation to keep every OS aligned.
 
 ## 3. Memory & Storage
 - **LPDDR4**: 1 GB (32-bit bus) accessible to all U54 cores and FPGA DMA masters.
@@ -54,15 +54,15 @@ Reference quickstart guide for complete jumper matrix when changing boot modes o
 1. **HSS (E51)**
    - Initializes clocks, PLL, DDR, and loads Libero FPGA bitstream.
    - Launches Linux, QNX, and Zephyr payloads per manifest.
-2. **Linux on U54_0**
+2. **Linux on U54_0/U54_1**
    - Built via Yocto BSP (Microchip `meta-polarfire-soc` + custom `meta-polarfire-nn`).
    - Hosts accelerator drivers, telemetry services, and networking.
-3. **QNX on U54_1**
+3. **QNX on U54_2**
    - BSP derived from QNX SDP; packaged into HSS payload slot.
    - Provides deterministic control loops and resource managers bridging to Linux/Zephyr.
-4. **Zephyr on U54_2..3**
+4. **Zephyr on U54_3**
    - West-based builds targeting hart-specific board configs.
-   - Implements radar control, DMA coordination, and telemetry collection.
+   - Implements radar control, DMA coordination, and telemetry collection for the single RTOS hart.
 
 ## 7. FPGA Acceleration Plan
 - **Blocks**: FIR filters, FFT stages, pulse compression, neural net accelerator modules.

@@ -1,0 +1,10 @@
+menu "AMP Ping-Pong options"
+
+config MPFS_HART_INDEX
+    int "Hart index reported in logs"
+    default 1
+    help
+      Identifies which U54 core this Zephyr instance targets. The value is
+      informational and included in log prefixes when exchanging RPMsg traffic.
+
+endmenu

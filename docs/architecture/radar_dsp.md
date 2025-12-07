@@ -10,7 +10,7 @@ Integration tasks:
 
 1. Define AXI/APB interfaces from fabric to MSS (Microprocessor Subsystem) for control and status.
 2. Choose CoreAXI4DMA or CoreAXI4Stream IP blocks for high-rate data moves into LPDDR4.
-3. Provide DMA or MMIO pathways so Linux (U54_0) and Zephyr (U54_1..3) can stream data in/out.
+3. Provide DMA or MMIO pathways so Linux (U54_0/U54_1), QNX (U54_2), and Zephyr (U54_3) can stream data in/out.
 4. Capture versioned Libero project files plus export scripts so Yocto builds can package bitstreams alongside HSS payloads.
 
 
@@ -38,7 +38,7 @@ This document describes the layered radar signal processing pipeline implemented
 
 ---
 
-## 3. Zephyr RTOS (U54_2 / U54_3)
+## 3. Zephyr RTOS (U54_3)
 
 - **DMA Servicing & ISR Handling:** Real-time management of DMA interrupts and data movement.
 - **Radar Cube Assembly:** Constructs range × Doppler × angle data cubes.
@@ -46,7 +46,7 @@ This document describes the layered radar signal processing pipeline implemented
 
 ---
 
-## 4. QNX Neutrino (U54_1)
+## 4. QNX Neutrino (U54_2)
 
 - **Safety Supervisor:** Monitors and validates radar cube data.
 - **Validation:** Checks plausibility and integrity of processed radar data.
@@ -54,7 +54,7 @@ This document describes the layered radar signal processing pipeline implemented
 
 ---
 
-## 5. Linux (U54_0)
+## 5. Linux (U54_0 / U54_1)
 
 - **ROS2 Fusion:** Integrates radar, camera, and IMU data for advanced perception.
 - **Point Cloud Generation:** Builds spatial representations for visualization and further processing.

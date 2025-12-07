@@ -1,0 +1,28 @@
+MACHINE ??= "mpfs-amp"
+DISTRO ?= "polarfire-amp"
+PACKAGE_CLASSES ?= "package_rpm"
+IMAGE_FSTYPES += "wic.gz"
+IMAGE_FSTYPES += "wic.bmap"
+BB_NUMBER_THREADS ?= "${@oe.utils.cpu_count()}"
+PARALLEL_MAKE ?= "-j ${@oe.utils.cpu_count()}"
+
+# Feature toggles
+EXTRA_IMAGE_FEATURES += "ssh-server-openssh"
+EXTRA_IMAGE_FEATURES += "debug-tweaks"
+
+# Always include the AMP runtime helpers (shared-memory prep + RPMsg gateway).
+IMAGE_INSTALL:append = " amp-runtime"
+
+# Custom layer settings
+AMP_LINUX_HART ?= "u54_0 u54_1"
+AMP_RTOS_HARTS ?= "u54_2 u54_3"
+AMP_QNX_HART ?= "u54_2"
+AMP_ZEPHYR_HART ?= "u54_3"
+AMP_SHARED_MEM_BASE ?= "0xB8000000"
+AMP_SHARED_MEM_SIZE ?= "0x00200000"
+
+EXTRA_IMAGE_FEATURES:append = " ssh-server-openssh debug-tweaks"
+
+# Automatically bundle Linux+Zephyr payloads after image creation
+IMAGE_CLASSES += "amp-payload"
+AMP_PAYLOAD_ENABLED ?= "1"

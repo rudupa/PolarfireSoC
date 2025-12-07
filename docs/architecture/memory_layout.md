@@ -8,7 +8,7 @@ Defines how DDR, scratchpads, and shared memory regions are partitioned across L
 | `0x8000_0000` | 0x8000_0000 | 128 MB | Linux (Stage 1) | Kernel + initramfs image, temporary framebuffer buffers. |
 | `0x8800_0000` | 0x8800_0000 | 512 MB | Linux (Stage 2) | Rootfs runtime heap, Weston/ROS2 processes, page cache. |
 | `0xA800_0000` | 0xA800_0000 | 128 MB | QNX | Deterministic control loops, IPC staging buffers. |
-| `0xB000_0000` | 0xB000_0000 | 128 MB | Zephyr harts | Split into 64 MB (U54_2) + 64 MB (U54_3) for DMA descriptors and stacks. |
+| `0xB000_0000` | 0xB000_0000 | 128 MB | Zephyr | Dedicated to U54_3 for radar DMA descriptors, stacks, and telemetry buffers (Linux can borrow via CMA if Zephyr idle). |
 | `0xB800_0000` | 0xB800_0000 | 64 MB | Shared IPC | OpenAMP shared memory, mailbox queues, ROS2 ↔ QNX bridge. |
 | `0xBC00_0000` | 0xBC00_0000 | 64 MB | FPGA DMA buffers | Radar DSP output, NN accelerator data staging. |
 | `0xC000_0000+` | remaining | 64 MB | Reserved | Future growth / debug.

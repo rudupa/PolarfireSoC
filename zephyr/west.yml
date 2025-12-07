@@ -1,0 +1,23 @@
+manifest:
+  self:
+    path: polarfire-amp-zephyr
+    west-commands: modules/zephyr-applications/scripts/west-commands.yml
+
+  remotes:
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
+    - name: polarfire-soc
+      url-base: https://github.com/polarfire-soc
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject-rtos
+      revision: v4.0.0
+      import:
+        name-allowlist:
+          - hal_microchip
+          - cmsis
+    - name: zephyr-applications
+      remote: polarfire-soc
+      revision: main
+      path: modules/zephyr-applications

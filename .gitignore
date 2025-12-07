@@ -3,6 +3,11 @@ build/
 **/build/
 **/out/
 **/tmp/
+# Keep helper scripts under scripts/build despite the glob above
+!scripts/build/
+!scripts/build/**/*.sh
+!scripts/build/**/*.ps1
+!scripts/build/README.md
 
 # Yocto artifacts
 yocto/build*/
@@ -16,7 +21,8 @@ bsp/libero/projects/**/smartgen/
 bsp/libero/projects/**/synthesis/
 
 # HSS payload bundles
-bsp/hss/payloads/
+bsp/hss/payloads/*
+!bsp/hss/payloads/README.md
 
 # Zephyr artifacts
 zephyr/**/build/

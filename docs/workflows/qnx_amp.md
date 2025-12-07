@@ -7,8 +7,8 @@
 
 2. **Build Steps**
    1. **Linux** – Use Yocto to create the Linux image and copy kernel/rootfs artifacts into `bsp/hss/payloads/linux/`.
-   2. **QNX** – Build the startup + IFS image targeting hart `u54_1`; drop resulting binaries into `bsp/hss/payloads/qnx/`.
-   3. **Zephyr** – Create Zephyr ELF files for `u54_2` and `u54_3`; place them under `bsp/hss/payloads/zephyr/`.
+   2. **QNX** – Build the startup + IFS image targeting hart `u54_2`; drop resulting binaries into `bsp/hss/payloads/qnx/`.
+   3. **Zephyr** – Create the Zephyr ELF for hart `u54_3` and place it under `bsp/hss/payloads/zephyr/`.
 
 3. **HSS Payload Manifest**
    - Define per-hart entries specifying load address, entry point, and reset vector overrides.

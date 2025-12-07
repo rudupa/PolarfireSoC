@@ -1,0 +1,13 @@
+BBPATH ?= "${TOPDIR}"
+BBFILES ?= ""
+
+BBLAYERS ?= " \
+  ${TOPDIR}/../sources/poky/meta \
+  ${TOPDIR}/../sources/poky/meta-poky \
+  ${TOPDIR}/../sources/poky/meta-yocto-bsp \
+  ${TOPDIR}/../sources/meta-openembedded/meta-oe \
+  ${TOPDIR}/../sources/meta-openembedded/meta-networking \
+  ${TOPDIR}/../sources/meta-mchp/meta-mchp-common \
+  ${TOPDIR}/../sources/meta-mchp/meta-mchp-polarfire-soc/meta-mchp-polarfire-soc-bsp \
+  ${TOPDIR}/../layers/meta-polarfire-nn \
+"
