@@ -37,7 +37,7 @@ Quickstart
   - `west init -l zephyr && west update` pulls Zephyr + modules.
 2. **Configure environments**
   - Windows PowerShell: `pwsh -File scripts/env/setup-yocto-env.ps1` or `setup-zephyr-env.ps1`.
-  - WSL/Linux: `source scripts/env/setup-yocto-env.sh` and `setup-zephyr-env.sh` to export `MACHINE=mpfs-amp`, `ZEPHYR_BASE`, etc.
+  - WSL/Linux: `source scripts/env/setup-yocto-env.sh` and `setup-zephyr-env.sh` to export `MACHINE=mpfs-disco-kit`, `ZEPHYR_BASE`, etc.
 3. **Build Yocto Linux (U54_0/U54_1)**
   - `bitbake core-image-full-cmdline` (or future `mpfs-dev-image`) with `local.conf` derived from `yocto/conf/templates/` (the sample already adds the `amp-runtime` package so shared-memory/IPMsg services come preinstalled).
 4. **Build Zephyr (U54_3)**

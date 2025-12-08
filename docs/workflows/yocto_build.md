@@ -25,14 +25,14 @@
    ```
 3. **Apply templates**
    - Copy `yocto/conf/templates/local.conf.sample` and `bblayers.conf.sample` into `build-mpfs-amp/conf/`.
-   - `local.conf` defaults to the new `mpfs-amp` MACHINE (defined inside `meta-polarfire-nn`), appends `amp-runtime` to `IMAGE_INSTALL`, and wires in the `amp-payload` class so AMP helpers land in every image.
+   - `local.conf` defaults to the vendor `mpfs-disco-kit` MACHINE, appends `amp-runtime` to `IMAGE_INSTALL`, and wires in the `amp-payload` class so AMP helpers land in every image.
    - The `meta-polarfire-nn` layer already appends `bsp/device-tree/linux/amp-shmem-overlay.dtsi` to `KERNEL_DEVICETREE` and merges `linux/kernel/fragments/mpfs_amp.fragment` during `do_configure`, guaranteeing Linux reserves the shared DDR window and enables RPMsg/OpenAMP support out of the box.
 4. **Build Linux image + SDK**
    ```sh
    bitbake mpfs-dev-image
    bitbake mpfs-dev-image -c populate_sdk
    ```
-   Expect deploy artifacts under `build-mpfs-amp/tmp/deploy/images/mpfs-amp/` for the Linux hart payload.
+   Expect deploy artifacts under `build-mpfs-amp/tmp/deploy/images/mpfs-disco-kit/` for the Linux hart payload.
 5. **Export to AMP payload**
    - The sample `local.conf` already appends the `amp-payload` class, which invokes `scripts/build/amp_basic.sh` after the image finishes building. Generated payloads appear under `bsp/hss/payloads/build/`.
    - To run the helper manually (for rebuilds without BitBake), execute `scripts/build/amp_basic.sh` from the repo root.

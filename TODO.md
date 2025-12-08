@@ -10,7 +10,7 @@
 ## 1. Tooling & Infrastructure
 - [ ] Add CI jobs for linting markdown/docs and validating repo structure.
  - [x] Provide PowerShell + Bash versions of `scripts/env` setup helpers (Yocto, Zephyr, Libero).
-	- [x] Bash: `scripts/env/setup-yocto-env.sh` exports `MACHINE=mpfs-amp` defaults.
+	- [x] Bash: `scripts/env/setup-yocto-env.sh` exports `MACHINE=mpfs-disco-kit` defaults.
 	- [x] Bash: `scripts/env/setup-zephyr-env.sh` wires `ZEPHYR_WORKSPACE`, `ZEPHYR_BASE`, and `WEST_CONFIG`.
 	- [x] Bash: `scripts/env/setup-libero-env.sh` captures Libero + HSS payload generator paths.
 	- [x] PowerShell: `setup-yocto-env.ps1`, `setup-zephyr-env.ps1`, and `setup-libero-env.ps1` mirror the same variables under Windows.

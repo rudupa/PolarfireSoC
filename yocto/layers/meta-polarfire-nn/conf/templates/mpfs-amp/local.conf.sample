@@ -1,4 +1,4 @@
-MACHINE ??= "mpfs-amp"
+MACHINE ??= "mpfs-disco-kit"
 DISTRO ?= "polarfire-amp"
 PACKAGE_CLASSES ?= "package_rpm"
 IMAGE_FSTYPES += "wic.gz"

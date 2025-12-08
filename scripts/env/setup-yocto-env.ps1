@@ -4,7 +4,7 @@ param(
 
 $TemplateConf = Join-Path $RepoRoot "yocto/conf/templates"
 $env:TEMPLATECONF = $TemplateConf
-if (-not $env:MACHINE) { $env:MACHINE = "mpfs-amp" }
+if (-not $env:MACHINE) { $env:MACHINE = "mpfs-disco-kit" }
 if (-not $env:DISTRO) { $env:DISTRO = "polarfire-amp" }
 
 Write-Host "[Yocto AMP env]"

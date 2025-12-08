@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 export TEMPLATECONF="${REPO_ROOT}/yocto/layers/meta-polarfire-nn/conf/templates/mpfs-amp"
-export MACHINE="${MACHINE:-mpfs-amp}"
+export MACHINE="${MACHINE:-mpfs-disco-kit}"
 export DISTRO="${DISTRO:-polarfire-amp}"
 
 cat <<EOF
