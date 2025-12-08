@@ -1,2 +1,6 @@
 # Enforce LF line endings for Zephyr sources regardless of host OS
 zephyr/** text eol=lf
+
+# Keep BSP DT + HSS files LF-only as well
+bsp/device-tree/** text eol=lf
+bsp/hss/** text eol=lf
