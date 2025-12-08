@@ -14,6 +14,8 @@ yocto/build*/
 yocto/sstate-cache/
 yocto/tmp/
 yocto/downloads/
+yocto/.repo/
+yocto/sources/
 
 # Libero / FPGA outputs
 bsp/libero/exports/
