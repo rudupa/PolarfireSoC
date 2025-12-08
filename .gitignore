@@ -3,6 +3,7 @@ build/
 **/build/
 **/out/
 **/tmp/
+build-mpfs-amp/
 # Keep helper scripts under scripts/build despite the glob above
 !scripts/build/
 !scripts/build/**/*.sh
