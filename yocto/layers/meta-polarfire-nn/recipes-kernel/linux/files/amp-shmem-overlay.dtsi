@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 // Keep in sync with bsp/device-tree/linux/amp-shmem-overlay.dtsi.
 
+/dts-v1/;
+/plugin/;
+
 / {
 	reserved-memory {
 		#address-cells = <2>;

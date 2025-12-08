@@ -23,6 +23,11 @@ AMP_SHARED_MEM_SIZE ?= "0x00200000"
 
 EXTRA_IMAGE_FEATURES:append = " ssh-server-openssh debug-tweaks"
 
+# Required for amp-runtime systemd units packaged in amp-runtime.bb.
+DISTRO_FEATURES:append = " systemd usrmerge"
+VIRTUAL-RUNTIME_init_manager = "systemd"
+VIRTUAL-RUNTIME_initscripts = ""
+
 # Automatically bundle Linux+Zephyr payloads after image creation
 IMAGE_CLASSES += "amp-payload"
 AMP_PAYLOAD_ENABLED ?= "1"

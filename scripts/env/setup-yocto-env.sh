@@ -44,7 +44,13 @@ ensure_yocto_sources
 
 export TEMPLATECONF="${REPO_ROOT}/yocto/layers/meta-polarfire-nn/conf/templates/mpfs-amp"
 export MACHINE="${MACHINE:-mpfs-disco-kit}"
-export DISTRO="${DISTRO:-polarfire-amp}"
+
+DEFAULT_DISTRO="polarfire-amp"
+DISTRO_CONF="${REPO_ROOT}/yocto/layers/meta-polarfire-nn/conf/distro/${DEFAULT_DISTRO}.conf"
+if [ ! -f "${DISTRO_CONF}" ]; then
+  DEFAULT_DISTRO="poky"
+fi
+export DISTRO="${DISTRO:-${DEFAULT_DISTRO}}"
 
 cat <<EOF
 [Yocto AMP env]

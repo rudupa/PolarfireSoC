@@ -1,7 +1,7 @@
 DESCRIPTION = "AMP shared-memory prep + RPMsg gateway services"
 SUMMARY = "Systemd units and helper scripts that expose the AMP layout to Linux"
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://${THISDIR}/LICENSE;md5=3e7cec4c596cb74f179f1dc93b6bdc24"
+LIC_FILES_CHKSUM = "file://${THISDIR}/LICENSE;md5=6c477ed7449b0bd782d3898de4d5f0d5"
 
 SRC_URI = " \
     file://amp-shmem-setup.sh \
